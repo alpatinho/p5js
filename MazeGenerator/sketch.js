@@ -5,10 +5,10 @@ var current;
 var stack = [];
 
 function setup() {
-	createCanvas(400, 400);
+	createCanvas(600, 600);
 	numLinhas = floor(width/larguraBloco);
 	numColunas = floor(height/larguraBloco);
-	frameRate(10);
+	frameRate(20);
 
 	// Instancia um bloco em cada posicao do grid
 	for (var   j = 0; j < numLinhas; j++) {
@@ -28,15 +28,22 @@ function draw() {
 			grid[i].printaBloco();
 	}
 
+	// Passo 1 do algoritmo
 	current.visitado = true;
+	current.pintaCurrent();
 	var next = current.getNeighbors();
 	if(next) {
 		next.visited = true;
+		// Passo 2
+		stack.push(current);
+		// Passo 3
 		removeParedes(current, next);
+		// Passo 4
 		current = next;
+	} else if(stack.length > 0) {
+		var backtrack = stack.pop();
+		current = backtrack;
 	}
-
-
 }
 
 function removeParedes(current,next) {
@@ -71,6 +78,14 @@ function Bloco(x, y) {
 	this.y = y;
 	this.paredes = [true,true,true,true];
 	this.visistado = false;
+
+	this.pintaCurrent = function(current) {
+		var x = this.x*larguraBloco;
+		var y = this.y*larguraBloco;
+		noStroke();
+		fill(218, 165, 32, 100);
+		rect(x,y,larguraBloco,larguraBloco);
+	}
 
 	this.getNeighbors = function() {
 		var neighbors = [];
